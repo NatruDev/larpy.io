@@ -1,0 +1,397 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Larpy | Lock in and prove it</title>
+    <meta
+      name="description"
+      content="Larpy is a focus timer with streaks and a study feed. Every session you finish fills a square on your year and becomes a card you can post. Join the waitlist." />
+    <meta name="theme-color" content="#000000" />
+    <meta name="color-scheme" content="dark" />
+
+    <!-- Social previews. Once the site has its domain, make og:image and og:url full URLs
+         (https://<domain>/og.png); some apps ignore relative ones. -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Larpy" />
+    <meta property="og:title" content="Larpy | Lock in and prove it" />
+    <meta
+      property="og:description"
+      content="A focus timer with streaks and a study feed. Every session you finish becomes a square on your year and a card you can post." />
+    <meta property="og:image" content="/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet" />
+    <link rel="stylesheet" href="/styles.css" />
+    <script src="/main.js" defer></script>
+  </head>
+  <body>
+    <svg width="0" height="0" class="defs" aria-hidden="true">
+      <symbol id="flame" viewBox="0 0 24 24">
+        <path d="M12.6 1.8c.7 3.9 4.9 6.6 4.9 12.4a5.5 5.5 0 0 1-11 0c0-3.1 1.8-4.8 3-6.4.9 1.4 1.3 2.5 1.5 3.7 1.6-2.6 2.3-6.1 1.6-9.7z" />
+      </symbol>
+      <symbol id="ribbon" viewBox="0 0 24 24">
+        <circle cx="12" cy="9" r="6" fill="none" stroke="currentColor" stroke-width="2" />
+        <path d="M8.5 13.8 7 22l5-2.6 5 2.6-1.5-8.2" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" />
+      </symbol>
+    </svg>
+
+    <a class="skip" href="#main">Skip to content</a>
+
+    <header class="nav">
+      <div class="wrap nav-inner">
+        <a class="brand" href="/" aria-label="Larpy home">
+          <svg class="brand-mark" aria-hidden="true"><use href="#flame" /></svg>
+          <span>Larpy</span>
+        </a>
+        <nav class="nav-links" aria-label="Main">
+          <a class="nav-link" href="#" data-app-link hidden>Try the timer</a>
+          <a class="btn btn-small" href="#join">Join the waitlist</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main">
+      <!-- Hero -->
+      <section class="hero">
+        <div class="wrap hero-inner">
+          <div class="hero-copy">
+            <h1>Lock in.<br />Prove it.</h1>
+            <p class="lede">
+              Larpy is a focus timer with streaks and a feed for students. Every session you finish fills a
+              square on your year and turns into a card you can post.
+            </p>
+
+            <form class="waitlist" data-waitlist novalidate>
+              <div class="field">
+                <label class="sr-only" for="email-hero">Email address</label>
+                <input
+                  id="email-hero"
+                  type="email"
+                  name="email"
+                  autocomplete="email"
+                  inputmode="email"
+                  placeholder="you@school.edu"
+                  required />
+                <button class="btn" type="submit">Join the waitlist</button>
+              </div>
+              <div class="hp" aria-hidden="true">
+                <label>Leave this empty <input type="text" name="website" tabindex="-1" autocomplete="off" /></label>
+              </div>
+              <p class="form-note" data-status aria-live="polite">Free. We email you when accounts open.</p>
+            </form>
+
+            <p class="hero-alt" data-app-link-wrap hidden>
+              Can’t wait? <a href="#" data-app-link>Use the timer now in your browser</a>, no account needed.
+            </p>
+          </div>
+
+          <figure class="timer" aria-label="A running Larpy focus timer">
+            <div class="timer-head">
+              <span class="pill"><i class="dot" style="--c: #5b8fd1"></i>Biology</span>
+              <span class="timer-phase" data-phase>Focusing</span>
+            </div>
+            <div class="dial">
+              <svg viewBox="0 0 240 240" aria-hidden="true">
+                <circle class="dial-face" cx="120" cy="120" r="104" />
+                <path class="dial-elapsed" data-elapsed d="" />
+                <g class="dial-ticks" data-ticks></g>
+                <circle class="dial-handle" data-handle cx="120" cy="16" r="6" />
+              </svg>
+              <div class="dial-readout">
+                <span class="digits" data-digits>25:00</span>
+                <span class="ends" data-ends>&nbsp;</span>
+              </div>
+            </div>
+            <div class="presets" role="group" aria-label="Session length">
+              <button type="button" data-minutes="25" aria-pressed="true">25m</button>
+              <button type="button" data-minutes="45" aria-pressed="false">45m</button>
+              <button type="button" data-minutes="60" aria-pressed="false">1h</button>
+              <button type="button" data-minutes="90" aria-pressed="false">90m</button>
+            </div>
+            <figcaption class="timer-caption">Pomodoro breaks start and end on their own.</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <!-- Streaks and heatmap -->
+      <section class="section" aria-labelledby="streaks-title">
+        <div class="wrap">
+          <div class="section-head">
+            <h2 id="streaks-title">One focused minute keeps the streak alive.</h2>
+            <p>
+              Study for a minute and the day counts. Reach your daily goal and its square glows brighter. Keep it
+              up and your year starts to look like this.
+            </p>
+          </div>
+
+          <div class="panel heat-panel">
+            <div class="heat-top">
+              <div class="streak">
+                <svg class="streak-flame" aria-hidden="true"><use href="#flame" /></svg>
+                <div>
+                  <p class="streak-num"><span data-streak>23</span>-day streak</p>
+                  <p class="muted small">Today: 1h 40m of 2h</p>
+                </div>
+              </div>
+              <dl class="heat-stats">
+                <div><dt>This year</dt><dd data-year-hours>412h</dd></div>
+                <div><dt>Days studied</dt><dd data-year-days>214</dd></div>
+              </dl>
+            </div>
+            <div class="heat-scroll">
+              <div class="heatmap" data-heatmap role="img" aria-label="An example year of study: most days filled, brighter around exams."></div>
+            </div>
+            <div class="legend" aria-hidden="true">
+              <span>Less</span><i class="h0"></i><i class="h1"></i><i class="h2"></i><i class="h3"></i><i class="h4"></i><span>More</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Share cards -->
+      <section class="section" aria-labelledby="share-title">
+        <div class="wrap split">
+          <div class="section-head">
+            <h2 id="share-title">Every session ends with something to post.</h2>
+            <p>
+              Finish a session and Larpy celebrates it, then makes a card ready for Instagram or TikTok: the
+              session, your streak, or your whole year. Put a photo of your desk behind it.
+            </p>
+          </div>
+
+          <div class="cards" aria-label="Example share cards">
+            <article class="share-card">
+              <header class="sc-top">
+                <span class="sc-brand"><svg aria-hidden="true"><use href="#flame" /></svg>Larpy</span>
+                <span class="muted small">Tuesday, March 11</span>
+              </header>
+              <div class="sc-body">
+                <span class="pill"><i class="dot" style="--c: #4fb39a"></i>Organic Chemistry</span>
+                <p class="sc-big">2h 14m</p>
+                <p class="muted small">focused, 112% of the daily goal</p>
+                <div class="timeline" aria-hidden="true">
+                  <i style="flex: 50"></i><b style="flex: 10"></b><i style="flex: 50"></i><b style="flex: 10"></b><i style="flex: 34"></i>
+                </div>
+              </div>
+              <footer class="muted small">@maya_studies</footer>
+            </article>
+
+            <article class="share-card share-card-back">
+              <header class="sc-top">
+                <span class="sc-brand"><svg aria-hidden="true"><use href="#flame" /></svg>Larpy</span>
+                <span class="muted small">This week</span>
+              </header>
+              <div class="sc-body">
+                <svg class="sc-flame" aria-hidden="true"><use href="#flame" /></svg>
+                <p class="sc-big">23 days</p>
+                <p class="muted small">in a row</p>
+                <div class="week" aria-hidden="true">
+                  <i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="today"></i>
+                </div>
+              </div>
+              <footer class="muted small">@maya_studies</footer>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- Feed -->
+      <section class="section" aria-labelledby="feed-title">
+        <div class="wrap split split-reverse">
+          <div class="section-head">
+            <h2 id="feed-title">Your friends see the hours.</h2>
+            <p>
+              Post a session and it lands in your friends’ feed with the time, the subject and your note. They
+              give it Respect. You see who’s actually putting in the work.
+            </p>
+            <p>
+              Posted sessions are timed by Larpy from start to finish. Time you type in by hand stays on your
+              profile and never counts toward rankings.
+            </p>
+          </div>
+
+          <div class="feed" aria-label="Example feed">
+            <article class="post">
+              <header class="post-head">
+                <span class="avatar" style="--c: #e88ab4">J</span>
+                <div>
+                  <p class="post-name">Jonah Park</p>
+                  <p class="muted small">studied 18 min ago</p>
+                </div>
+              </header>
+              <div class="post-chips">
+                <span class="pill"><i class="dot" style="--c: #e2be55"></i>Calculus II</span>
+                <span class="post-time">3h 05m</span>
+              </div>
+              <div class="timeline" aria-hidden="true">
+                <i style="flex: 50"></i><b style="flex: 10"></b><i style="flex: 50"></i><b style="flex: 10"></b><i style="flex: 50"></i><b style="flex: 10"></b><i style="flex: 35"></i>
+              </div>
+              <p class="post-note">Series convergence finally clicked. 40 practice problems done.</p>
+              <button class="respect is-on" type="button" aria-pressed="true">
+                <svg aria-hidden="true"><use href="#ribbon" /></svg>Respect <span data-count>14</span>
+              </button>
+            </article>
+
+            <article class="post">
+              <header class="post-head">
+                <span class="avatar" style="--c: #9c8fe3">A</span>
+                <div>
+                  <p class="post-name">Amara Okafor</p>
+                  <p class="muted small">studied 1 hour ago</p>
+                </div>
+              </header>
+              <div class="post-chips">
+                <span class="pill"><i class="dot" style="--c: #f2a15e"></i>MCAT</span>
+                <span class="post-time">1h 30m</span>
+              </div>
+              <div class="timeline" aria-hidden="true">
+                <i style="flex: 50"></i><b style="flex: 10"></b><i style="flex: 30"></i>
+              </div>
+              <button class="respect" type="button" aria-pressed="false">
+                <svg aria-hidden="true"><use href="#ribbon" /></svg>Respect <span data-count>6</span>
+              </button>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- Now and next -->
+      <section class="section" aria-labelledby="now-title">
+        <div class="wrap">
+          <div class="section-head">
+            <h2 id="now-title">Start today. The rest is on the way.</h2>
+          </div>
+          <div class="now-next">
+            <div class="panel">
+              <h3>In your browser now</h3>
+              <ul class="checks">
+                <li>Focus timer with Pomodoro breaks</li>
+                <li>Streaks, heatmap and stats by subject</li>
+                <li>Share cards for every session</li>
+              </ul>
+              <a class="btn btn-ghost" href="#" data-app-link hidden>Open the timer</a>
+            </div>
+            <div class="panel panel-soon">
+              <h3>When accounts open</h3>
+              <ul class="checks checks-soon">
+                <li>The feed, friends and Respect</li>
+                <li>Leaderboards with friends and your school</li>
+                <li>iPhone and Android apps with a lock-screen timer</li>
+                <li>Your semester and year, wrapped</li>
+              </ul>
+              <a class="btn" href="#join">Join the waitlist</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- FAQ -->
+      <section class="section" aria-labelledby="faq-title">
+        <div class="wrap faq-wrap">
+          <h2 id="faq-title">Questions</h2>
+          <div class="faq">
+            <details>
+              <summary>Is Larpy free?</summary>
+              <p>Yes. The timer, streaks, feed and stats are free.</p>
+            </details>
+            <details>
+              <summary>Can I use it before accounts open?</summary>
+              <p>
+                Yes. The timer works in your browser today, with no sign-up. Sessions are saved in that browser, so
+                save a share card of anything you want to keep.
+              </p>
+            </details>
+            <details>
+              <summary>Why is it called Larpy?</summary>
+              <p>
+                Larping means acting the part. Larpy is the opposite: the time on your posts is time you actually
+                studied. The name is the only thing here that’s pretend.
+              </p>
+            </details>
+            <details>
+              <summary>Does it work on my phone?</summary>
+              <p>
+                It works in your phone’s browser now. The iPhone and Android apps come after accounts open, and the
+                waitlist hears first.
+              </p>
+            </details>
+            <details>
+              <summary>What do you do with my email?</summary>
+              <p>
+                We email you when accounts open, plus a few launch updates. We never sell or share it. Reply to any
+                of our emails and we’ll delete it.
+              </p>
+            </details>
+          </div>
+        </div>
+      </section>
+
+      <!-- Final call -->
+      <section class="section join" id="join" aria-labelledby="join-title">
+        <div class="wrap join-inner">
+          <svg class="join-flame" aria-hidden="true"><use href="#flame" /></svg>
+          <h2 id="join-title">Get in before your friends do.</h2>
+          <p class="muted">Join the waitlist and you’ll be first in when accounts open.</p>
+          <form class="waitlist" data-waitlist novalidate>
+            <div class="field">
+              <label class="sr-only" for="email-join">Email address</label>
+              <input
+                id="email-join"
+                type="email"
+                name="email"
+                autocomplete="email"
+                inputmode="email"
+                placeholder="you@school.edu"
+                required />
+              <button class="btn" type="submit">Join the waitlist</button>
+            </div>
+            <div class="hp" aria-hidden="true">
+              <label>Leave this empty <input type="text" name="website" tabindex="-1" autocomplete="off" /></label>
+            </div>
+            <p class="form-note" data-status aria-live="polite">Free. We email you when accounts open.</p>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="wrap footer-inner">
+        <a class="brand brand-small" href="/" aria-label="Larpy home">
+          <svg class="brand-mark" aria-hidden="true"><use href="#flame" /></svg>
+          <span>Larpy</span>
+        </a>
+        <nav class="footer-links" aria-label="Social" data-socials></nav>
+        <p class="muted small">© <span data-year>2026</span> Larpy</p>
+      </div>
+    </footer>
+
+    <!-- Shown in place of a form once someone has joined. -->
+    <template id="joined">
+      <div class="joined" tabindex="-1">
+        <p class="joined-title"><svg aria-hidden="true"><use href="#flame" /></svg><span data-joined-text>You’re on the list.</span></p>
+        <p class="muted small">We’ll email you when accounts open. One quick question while you’re here:</p>
+        <fieldset class="studying">
+          <legend>What are you studying for?</legend>
+          <div class="chips">
+            <button type="button" data-studying="High school">High school</button>
+            <button type="button" data-studying="University">University</button>
+            <button type="button" data-studying="Exam prep">Exam prep</button>
+            <button type="button" data-studying="Learning on my own">Learning on my own</button>
+          </div>
+        </fieldset>
+        <p class="form-note" data-studying-status aria-live="polite"></p>
+        <button class="link-btn" type="button" data-reset>Sign up a different email</button>
+      </div>
+    </template>
+  </body>
+</html>
