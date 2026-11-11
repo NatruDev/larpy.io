@@ -1,21 +1,15 @@
 import { StyleSheet, View } from 'react-native';
 
-import { LocalProfile } from '@/components/local/local-profile';
 import { ProfileView } from '@/components/profile/profile-view';
 import { ReminderSettings } from '@/components/reminders/reminder-settings';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Text } from '@/components/ui/text';
-import { LOCAL_MODE } from '@/lib/backend';
 import { formatGoal } from '@/lib/format';
 import { useAuth } from '@/providers/auth-provider';
 import { Spacing } from '@/theme';
 
-export default function ProfileRoute() {
-  return LOCAL_MODE ? <LocalProfile /> : <ProfileScreen />;
-}
-
-function ProfileScreen() {
+export default function ProfileScreen() {
   const { session, profile, signOut } = useAuth();
 
   return (

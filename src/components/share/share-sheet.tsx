@@ -10,8 +10,6 @@ import { canSaveSeparately, captureCard, saveImage, shareImage } from '@/feature
 import { addDays, startOfWeek } from '@/features/stats/dates';
 import { useDailyTotals, type StatsSummary } from '@/features/stats/use-stats';
 import { friendlyError } from '@/lib/errors';
-import { getLocalPauses } from '@/features/local/local-store';
-import { LOCAL_MODE } from '@/lib/backend';
 import { supabase } from '@/lib/supabase';
 import type { SessionPause } from '@/lib/types';
 import type { SessionWithSubject } from '@/providers/active-session-provider';
@@ -52,8 +50,7 @@ export function ShareSheet({ visible, onClose, session, summary }: Props) {
 
   // The timeline bar on the session card needs the session's breaks.
   useEffect(() => {
-    // Local mode reads them straight from the device below.
-    if (!visible || LOCAL_MODE) return;
+    if (!visible) return;
     let cancelled = false;
     supabase
       .from('session_pauses')
@@ -69,7 +66,7 @@ export function ShareSheet({ visible, onClose, session, summary }: Props) {
   }, [visible, session.id]);
 
   const name = `${APP_NAME.toLowerCase()}-${design}-${summary.today}`;
-  const cardData = { session, pauses: LOCAL_MODE ? getLocalPauses(session.id) : pauses, summary, totals: totals ?? new Map(), username: profile?.username ?? null };
+  const cardData = { session, pauses, summary, totals: totals ?? new Map(), username: profile?.username ?? null };
 
   async function chooseBackground(source: 'library' | 'camera') {
     setMessage(null);

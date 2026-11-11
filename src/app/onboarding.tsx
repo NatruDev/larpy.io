@@ -21,8 +21,6 @@ import { IconButton } from '@/components/ui/icon-button';
 import { Text } from '@/components/ui/text';
 import { TextField } from '@/components/ui/text-field';
 import { friendlyError, UNIQUE_VIOLATION } from '@/lib/errors';
-import { completeLocalOnboarding } from '@/features/local/local-store';
-import { LOCAL_MODE } from '@/lib/backend';
 import { formatGoalShort } from '@/lib/format';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/providers/auth-provider';
@@ -153,18 +151,6 @@ export default function OnboardingScreen() {
     }
 
     setBusy(true);
-    if (LOCAL_MODE) {
-      completeLocalOnboarding({
-        displayName: displayName.trim() || null,
-        username,
-        dailyGoalMinutes: goal,
-        timeZone: detectTimeZone(),
-        subjects: subjects.map((name, i) => ({ name, color: SubjectColors[i % SubjectColors.length] })),
-      });
-      await refreshProfile();
-      setBusy(false);
-      return;
-    }
     try {
       // Subjects first, so a failed profile update can be retried without losing them.
       const { data: existing, error: existingError } = await supabase

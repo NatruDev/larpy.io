@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Chip } from '@/components/ui/chip';
 import { DurationDial } from '@/components/timer/duration-dial';
+import { NewSubjectForm } from '@/components/timer/new-subject-form';
 import { QuickLengths } from '@/components/timer/quick-lengths';
 import { SubjectPicker } from '@/components/timer/subject-picker';
 import { Screen } from '@/components/ui/screen';
@@ -42,8 +43,9 @@ const DEFAULT_SETUP: Setup = { subjectId: null, goalMinutes: 60, breaksOn: false
 export default function FocusScreen() {
   const { session, start, busy, error, clearError } = useActiveSession();
   const { scheme, colors } = useTheme();
-  const { subjects } = useSubjects();
+  const { subjects, addSubject } = useSubjects();
   const [setup, setSetup] = useState<Setup>(DEFAULT_SETUP);
+  const [addingSubject, setAddingSubject] = useState(false);
   // The dial sweeps for its own changes (drag, taps, −/+) but jumps for presets and the restored setup,
   // where sweeping through many laps (12 h → 25 min) looks like a glitch.
   const [animateDial, setAnimateDial] = useState(false);
@@ -155,7 +157,23 @@ export default function FocusScreen() {
         <Text variant="label" color="textMuted">
           Subject
         </Text>
-        <SubjectPicker subjects={subjects} selectedId={subject?.id ?? null} onSelect={(id) => update({ subjectId: id })} />
+        <SubjectPicker
+          subjects={subjects}
+          selectedId={subject?.id ?? null}
+          onSelect={(id) => update({ subjectId: id })}
+          onAdd={() => setAddingSubject((open) => !open)}
+          adding={addingSubject}
+        />
+        {addingSubject ? (
+          <NewSubjectForm
+            onCancel={() => setAddingSubject(false)}
+            onAdd={async (name) => {
+              const added = await addSubject(name);
+              update({ subjectId: added.id });
+              setAddingSubject(false);
+            }}
+          />
+        ) : null}
       </View>
 
       <View style={[styles.group, { backgroundColor: colors.surface, borderColor: colors.border }]}>

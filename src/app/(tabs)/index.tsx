@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { Composer } from '@/components/feed/composer';
-import { LocalHome } from '@/components/local/local-home';
 import { EmptyFeed, PostList } from '@/components/feed/post-list';
 import { StreakCard } from '@/components/stats/streak-card';
 import { Button } from '@/components/ui/button';
@@ -12,7 +11,6 @@ import { Screen } from '@/components/ui/screen';
 import { Segmented } from '@/components/ui/segmented';
 import { useFeed, type FeedScope } from '@/features/feed/use-feed';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
-import { LOCAL_MODE } from '@/lib/backend';
 import { useAuth } from '@/providers/auth-provider';
 import { Spacing } from '@/theme';
 
@@ -21,11 +19,7 @@ const SCOPES = [
   { value: 'global', label: 'Everyone' },
 ] as const;
 
-export default function HomeRoute() {
-  return LOCAL_MODE ? <LocalHome /> : <HomeScreen />;
-}
-
-function HomeScreen() {
+export default function HomeScreen() {
   const { profile } = useAuth();
   const breakpoint = useBreakpoint();
   const firstName = profile?.display_name?.split(' ')[0];

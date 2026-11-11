@@ -4,7 +4,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StreakCard } from '@/components/stats/streak-card';
 import { Card } from '@/components/ui/card';
 import { Text } from '@/components/ui/text';
-import { LOCAL_MODE } from '@/lib/backend';
 import { Spacing, useTheme } from '@/theme';
 
 /**
@@ -21,24 +20,19 @@ export function RightRail() {
       contentContainerStyle={[styles.content, { paddingTop: insets.top + Spacing.lg }]}>
       <StreakCard />
 
-      {/* Social panels need accounts; local mode shows only the streak. */}
-      {LOCAL_MODE ? null : (
-        <>
-          <Card>
-            <Text variant="heading">Studying now</Text>
-            <Text variant="caption" color="textMuted">
-              When people you follow start a session, they show up here.
-            </Text>
-          </Card>
+      <Card>
+        <Text variant="heading">Studying now</Text>
+        <Text variant="caption" color="textMuted">
+          When people you follow start a session, they show up here.
+        </Text>
+      </Card>
 
-          <Card>
-            <Text variant="heading">Top today</Text>
-            <Text variant="caption" color="textMuted">
-              The day&apos;s top studiers among your friends will be listed here.
-            </Text>
-          </Card>
-        </>
-      )}
+      <Card>
+        <Text variant="heading">Top today</Text>
+        <Text variant="caption" color="textMuted">
+          The day&apos;s top studiers among your friends will be listed here.
+        </Text>
+      </Card>
     </ScrollView>
   );
 }

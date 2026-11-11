@@ -24,9 +24,6 @@ posts. The name lives in `src/constants/brand.ts` and `app.json`; the local Supa
   `start_session` / `pause_session` / `resume_session` / `end_session`. Never let the client write
   session times. Manual entries are `source = 'manual'` and don't count toward rankings.
 - **Days are local.** Streak and daily totals use the user's `time_zone`, not UTC.
-- **Local mode** (`src/lib/backend.ts`): with no Supabase configured, data lives on the device and the
-  device clock is used. `src/features/local/local-store.ts` must follow the same rules as the migrations
-  (session steps, stale sessions, day splits, streaks); change both together.
 - **Every table gets row-level security** in the same migration that creates it, plus coverage in
   `supabase/tests/db.test.mjs`. Run `npm run test:db` after any migration change, then `npm run db:types`.
 - Use the theme in `src/theme/` and UI pieces in `src/components/ui/` — no hard-coded colors.

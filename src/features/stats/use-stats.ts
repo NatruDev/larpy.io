@@ -1,14 +1,6 @@
 import { useEffect, useState } from 'react';
 import { AppState } from 'react-native';
 
-import {
-  localDailyTotals,
-  localReady,
-  localRecentSessions,
-  localSubjectTotals,
-  localSummary,
-} from '@/features/local/local-store';
-import { LOCAL_MODE } from '@/lib/backend';
 import { supabase } from '@/lib/supabase';
 import type { Session, Subject } from '@/lib/types';
 import { useActiveSession } from '@/providers/active-session-provider';
@@ -76,10 +68,6 @@ export function useLiveQuery<T>(load: (userId: string) => Promise<T>, key: strin
 
 export function useStatsSummary() {
   return useLiveQuery(async () => {
-    if (LOCAL_MODE) {
-      await localReady();
-      return localSummary();
-    }
     const { data, error } = await supabase.rpc('get_my_summary');
     if (error) throw error;
     return data as StatsSummary;
@@ -90,10 +78,6 @@ export function useStatsSummary() {
 export function useDailyTotals(from: string | null) {
   return useLiveQuery(async (userId) => {
     if (!from) return new Map<string, number>();
-    if (LOCAL_MODE) {
-      await localReady();
-      return new Map([...localDailyTotals()].filter(([day]) => day >= from));
-    }
     const { data, error } = await supabase
       .from('daily_stats')
       .select('day, focused_seconds')
@@ -114,10 +98,6 @@ export function rangeStart(range: SubjectRange, today: string) {
 export function useSubjectTotals(range: SubjectRange, today: string | null) {
   return useLiveQuery(async () => {
     if (!today) return [] as SubjectTotal[];
-    if (LOCAL_MODE) {
-      await localReady();
-      return localSubjectTotals(rangeStart(range, today), range === 'all' ? null : today);
-    }
     const { data, error } = await supabase.rpc('get_subject_totals', {
       p_from: rangeStart(range, today) ?? undefined,
       p_to: range === 'all' ? undefined : today,
@@ -134,10 +114,6 @@ export function useSubjectTotals(range: SubjectRange, today: string | null) {
 
 export function useRecentSessions(limit = 8) {
   return useLiveQuery(async (userId) => {
-    if (LOCAL_MODE) {
-      await localReady();
-      return localRecentSessions(limit);
-    }
     const { data, error } = await supabase
       .from('sessions')
       .select('*, subject:subjects(id, name, color)')

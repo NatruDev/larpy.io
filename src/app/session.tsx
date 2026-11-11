@@ -24,8 +24,6 @@ import { useDocumentTitle } from '@/hooks/use-document-title';
 import { useServerNow } from '@/hooks/use-server-now';
 import { friendlyError } from '@/lib/errors';
 import { formatClock, formatDuration, formatGoal, formatTimeOfDay } from '@/lib/format';
-import { setLocalCaption } from '@/features/local/local-store';
-import { LOCAL_MODE } from '@/lib/backend';
 import { supabase } from '@/lib/supabase';
 import { useActiveSession, type SessionWithSubject } from '@/providers/active-session-provider';
 import { useAuth } from '@/providers/auth-provider';
@@ -195,14 +193,11 @@ function SessionSummary({ session }: { session: SessionWithSubject }) {
 
   const focused = session.focused_seconds ?? 0;
   // Post is on by default whenever the session can be posted.
-  // Local mode has no feed yet; the share card is how a session leaves the device.
-  const notPostable = LOCAL_MODE
-    ? 'Posting arrives when accounts go live. Use Share it to save your session as an image.'
-    : session.is_private
-      ? 'Private sessions aren’t posted.'
-      : focused < POST_MIN_SESSION_SECONDS
-        ? 'Sessions under 5 minutes aren’t posted.'
-        : null;
+  const notPostable = session.is_private
+    ? 'Private sessions aren’t posted.'
+    : focused < POST_MIN_SESSION_SECONDS
+      ? 'Sessions under 5 minutes aren’t posted.'
+      : null;
   const [postIt, setPostIt] = useState(!notPostable);
   const [photos, setPhotos] = useState<PickedPhoto[]>([]);
   const posting = postIt && !notPostable;
@@ -220,9 +215,7 @@ function SessionSummary({ session }: { session: SessionWithSubject }) {
     setSaving(true);
     setError(null);
     try {
-      if (trimmed !== (session.caption ?? '') && LOCAL_MODE) {
-        setLocalCaption(session.id, trimmed || null);
-      } else if (trimmed !== (session.caption ?? '')) {
+      if (trimmed !== (session.caption ?? '')) {
         const { error: saveError } = await supabase.from('sessions').update({ caption: trimmed || null }).eq('id', session.id);
         if (saveError) throw saveError;
       }

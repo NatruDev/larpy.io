@@ -1,24 +1,52 @@
-import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { AppState } from 'react-native';
 
 import { computeTimer } from '@/features/timer/engine';
-import { LOCAL_MODE } from '@/lib/backend';
 import { friendlyError } from '@/lib/errors';
 import { supabase } from '@/lib/supabase';
-import type { Database, Session, SessionPause } from '@/lib/types';
+import type { Database, Session, SessionPause, Subject } from '@/lib/types';
 import { useAuth } from '@/providers/auth-provider';
-
-import { ActiveSessionContext, type ActiveSessionState, type SessionWithSubject, type StartOptions } from './active-session-context';
-import { LocalActiveSessionProvider } from './active-session-local';
-
-export { useActiveSession, type SessionWithSubject, type StartOptions } from './active-session-context';
 
 type Fns = Database['public']['Functions'];
 type SessionFn = 'start_session' | 'pause_session' | 'resume_session' | 'end_session';
 
+export type SessionWithSubject = Session & { subject: Pick<Subject, 'id' | 'name' | 'color'> | null };
+
+export type StartOptions = {
+  subject: Pick<Subject, 'id' | 'name' | 'color'> | null;
+  goalMinutes: number | null;
+  focusMinutes: number | null;
+  breakMinutes: number | null;
+  isPrivate: boolean;
+};
+
+type ActiveSessionState = {
+  /** The signed-in user's running session, if any (on any device). */
+  session: SessionWithSubject | null;
+  pauses: SessionPause[];
+  isLoading: boolean;
+  /** Server clock minus this device's clock, in ms. Add it to Date.now() for server time. */
+  offsetMs: number;
+  busy: boolean;
+  error: string | null;
+  /** The last session this device saw finish, for the summary screen. */
+  lastEnded: SessionWithSubject | null;
+  /** Goes up whenever a session ends or is discarded; stats screens refetch when it changes. */
+  statsVersion: number;
+  start: (options: StartOptions) => Promise<boolean>;
+  pause: () => Promise<void>;
+  resume: () => Promise<void>;
+  end: () => Promise<void>;
+  discard: () => Promise<void>;
+  dismissEnded: () => void;
+  clearError: () => void;
+};
+
 const HEARTBEAT_MS = 60_000;
 const AUTO_RETRY_MS = 5_000;
 const SESSION_COLUMNS = '*, subject:subjects(id, name, color)';
+
+const ActiveSessionContext = createContext<ActiveSessionState | null>(null);
 
 /** Reads the user's running session (if any) and its pauses. */
 async function fetchRunning(
@@ -41,12 +69,7 @@ async function fetchRunning(
   return { session, pauses: (pauseRows as SessionPause[] | null) ?? [] };
 }
 
-/** The running session: from Supabase (synced across devices), or kept on this device in local mode. */
 export function ActiveSessionProvider({ children }: { children: ReactNode }) {
-  return LOCAL_MODE ? <LocalActiveSessionProvider>{children}</LocalActiveSessionProvider> : <RemoteActiveSessionProvider>{children}</RemoteActiveSessionProvider>;
-}
-
-function RemoteActiveSessionProvider({ children }: { children: ReactNode }) {
   const { session: auth } = useAuth();
   const userId = auth?.user.id ?? null;
 
@@ -288,6 +311,12 @@ function RemoteActiveSessionProvider({ children }: { children: ReactNode }) {
   );
 
   return <ActiveSessionContext.Provider value={value}>{children}</ActiveSessionContext.Provider>;
+}
+
+export function useActiveSession() {
+  const value = useContext(ActiveSessionContext);
+  if (!value) throw new Error('useActiveSession must be used inside <ActiveSessionProvider>.');
+  return value;
 }
 
 async function fetchEnded(sessionId: string) {

@@ -2,8 +2,6 @@ import { addDays, startOfWeek } from '@/features/stats/dates';
 import { useLiveQuery, useStatsSummary, type RecentSession } from '@/features/stats/use-stats';
 import { computeTimer } from '@/features/timer/engine';
 import { useServerNow } from '@/hooks/use-server-now';
-import { localReady, localSessionsSince } from '@/features/local/local-store';
-import { LOCAL_MODE } from '@/lib/backend';
 import { supabase } from '@/lib/supabase';
 import { useActiveSession } from '@/providers/active-session-provider';
 
@@ -55,10 +53,6 @@ export function useWeekTimeline() {
 
   const { data: sessions } = useLiveQuery(async (userId) => {
     if (!monday) return [] as RecentSession[];
-    if (LOCAL_MODE) {
-      await localReady();
-      return localSessionsSince(`${addDays(monday, -1)}T00:00:00Z`);
-    }
     // A day early in UTC covers every time zone; trimmed to local days below.
     const { data, error } = await supabase
       .from('sessions')

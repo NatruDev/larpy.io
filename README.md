@@ -14,27 +14,14 @@ npm run web            # opens the app in your browser
 
 To try it on a phone, run `npx expo start`, install **Expo Go**, and scan the QR code.
 
-## Local mode (no database)
-
-With no Supabase project configured (or `EXPO_PUBLIC_LOCAL_MODE=true`), the app runs without a backend:
-no sign-in, no feed, and your profile and sessions are saved in the browser (localStorage) or on the
-phone. The timer, Pomodoro breaks, stats, streaks, heatmap and share cards all work. Clearing the
-browser's site data deletes everything, so save what you want with **Share it** after a session.
-
-```bash
-EXPO_PUBLIC_LOCAL_MODE=true npm run web
-```
-
-The code is in `src/features/local/local-store.ts` (the on-device stand-in for the database, following the
-same rules as the migrations) and `src/providers/active-session-local.tsx` (the timer).
-
 ## Deploy the web app (Vercel)
 
 `vercel.json` builds the web app with `npx expo export --platform web` and serves `dist/`, sending every
-path to the app. Import the GitHub repo on vercel.com (or run `npx vercel`); no settings needed. Without
-Supabase environment variables the deployed site runs in local mode. When the database goes live, add
-`EXPO_PUBLIC_SUPABASE_URL` and `EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY` in the Vercel project settings and
-redeploy.
+path to the app. Import the GitHub repo on vercel.com (or run `npx vercel`), then add
+`EXPO_PUBLIC_SUPABASE_URL` and `EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY` in the Vercel project settings (Production
+and Preview) and redeploy. They're built into the app, so a change needs a new build; without them the app
+stops with a "Supabase is not configured" error. In Supabase, set Authentication → URL Configuration → Site URL
+to the site's address and add it to Redirect URLs.
 
 ## Landing page and waitlist
 
@@ -86,8 +73,7 @@ Timer sessions can only be started, paused and ended through database functions 
 | `src/features/` | Feature logic kept out of screens, e.g. `timer/engine.ts` (pure timer math: rounds, breaks, time left), `stats/` (data hooks, date helpers), `feed/` (feed paging, posting, photo upload, Respect), `profile/` (profile pages, follow, block), `celebrate/` (what a finished session earned), `share/` (turning a card into an image) and `reminders/` (local study reminders, phones only). |
 | `src/components/ui/` | Shared building blocks: `Screen`, `Text`, `Button` (flat pill), `Card`, `TextField`, `Chip`. |
 | `src/theme/` | Colors (near-black neutrals, selectable accent (default Coral), named hues), Inter type styles, spacing. Use these instead of hard-coded colors. |
-| `src/providers/` | App-wide state: who is signed in, and the running focus session (synced across devices, or kept on the device in local mode). |
-| `src/features/local/`, `src/components/local/` | Local mode: the on-device data store, and the Home and Profile screens used without a backend. |
+| `src/providers/` | App-wide state: who is signed in, and the running focus session (synced across devices). |
 | `src/lib/` | Supabase client, generated database types (`database.types.ts`) and short names for them (`types.ts`), error messages. |
 | `src/constants/brand.ts` | The app name. |
 | `supabase/` | Migrations, demo data (`seed.sql`), database tests, local CLI config. |

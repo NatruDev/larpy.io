@@ -1,8 +1,6 @@
 import type { Session } from '@supabase/supabase-js';
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 
-import { getLocalProfile, LOCAL_USER_ID, localReady } from '@/features/local/local-store';
-import { LOCAL_MODE } from '@/lib/backend';
 import { supabase } from '@/lib/supabase';
 import type { Profile } from '@/lib/types';
 
@@ -23,45 +21,7 @@ async function fetchProfile(userId: string) {
   return data as Profile;
 }
 
-/** Uses Supabase accounts, or in local mode one profile kept on this device. */
 export function AuthProvider({ children }: { children: ReactNode }) {
-  return LOCAL_MODE ? <LocalAuthProvider>{children}</LocalAuthProvider> : <RemoteAuthProvider>{children}</RemoteAuthProvider>;
-}
-
-// Local mode has no sign-in: there is always one "signed in" user, and the profile exists once onboarding
-// is done. Only `user.id` is read from the session, so a minimal stand-in is enough.
-const LOCAL_SESSION = { user: { id: LOCAL_USER_ID, email: undefined } } as unknown as Session;
-
-function LocalAuthProvider({ children }: { children: ReactNode }) {
-  const [profile, setProfile] = useState<Profile | null>(null);
-  const [loaded, setLoaded] = useState(false);
-
-  useEffect(() => {
-    localReady().then(() => {
-      setProfile(getLocalProfile());
-      setLoaded(true);
-    });
-  }, []);
-
-  const refreshProfile = useCallback(async () => {
-    await localReady();
-    setProfile(getLocalProfile());
-  }, []);
-
-  // There is no account to sign out of; this clears the profile so onboarding shows again.
-  const signOut = useCallback(async () => {
-    setProfile(null);
-  }, []);
-
-  const value = useMemo<AuthState>(
-    () => ({ session: LOCAL_SESSION, profile, isLoading: !loaded, refreshProfile, signOut }),
-    [profile, loaded, refreshProfile, signOut]
-  );
-
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-}
-
-function RemoteAuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [sessionLoaded, setSessionLoaded] = useState(false);
   // Remembers which user the loaded profile belongs to, so a stale profile is never shown.
