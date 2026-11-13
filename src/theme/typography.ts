@@ -1,3 +1,4 @@
+import { BebasNeue_400Regular } from '@expo-google-fonts/bebas-neue';
 import {
   Inter_400Regular,
   Inter_500Medium,
@@ -14,6 +15,7 @@ export const fontAssets = {
   Inter_600SemiBold,
   Inter_700Bold,
   Inter_800ExtraBold,
+  BebasNeue_400Regular,
 };
 
 // Custom fonts on native don't respond to `fontWeight`, so each weight is its own family.
@@ -23,6 +25,8 @@ export const Fonts = {
   semibold: 'Inter_600SemiBold',
   bold: 'Inter_700Bold',
   extrabold: 'Inter_800ExtraBold',
+  /** Tall condensed numerals for the running timer. */
+  clock: 'BebasNeue_400Regular',
 } as const;
 
 export const TextVariants = {

@@ -24,7 +24,7 @@ export default function RootLayout() {
 
 function RootNavigator() {
   const [fontsLoaded, fontError] = useFonts(fontAssets);
-  const { session, profile, isLoading } = useAuth();
+  const { session, profile, isLoading, recovering } = useAuth();
   const { scheme, colors } = useTheme();
   const ready = (fontsLoaded || !!fontError) && !isLoading;
 
@@ -52,17 +52,21 @@ function RootNavigator() {
   };
 
   // Only one group is reachable at a time; when sign-in state changes, the router moves to it.
+  // A reset link signs you in, so recovery comes first: choose the new password before anything else.
   return (
     <ThemeProvider value={navigationTheme}>
       <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />
       <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Protected guard={!signedIn}>
+        <Stack.Protected guard={recovering}>
+          <Stack.Screen name="reset-password" />
+        </Stack.Protected>
+        <Stack.Protected guard={!recovering && !signedIn}>
           <Stack.Screen name="sign-in" />
         </Stack.Protected>
-        <Stack.Protected guard={signedIn && !onboarded}>
+        <Stack.Protected guard={!recovering && signedIn && !onboarded}>
           <Stack.Screen name="onboarding" />
         </Stack.Protected>
-        <Stack.Protected guard={signedIn && onboarded}>
+        <Stack.Protected guard={!recovering && signedIn && onboarded}>
           <Stack.Screen name="(tabs)" />
           <Stack.Screen name="session" options={{ animation: 'slide_from_bottom' }} />
           <Stack.Screen name="u/[username]" />

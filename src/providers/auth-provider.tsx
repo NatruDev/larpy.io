@@ -1,7 +1,7 @@
 import type { Session } from '@supabase/supabase-js';
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 
-import { supabase } from '@/lib/supabase';
+import { openedFromRecoveryLink, supabase } from '@/lib/supabase';
 import type { Profile } from '@/lib/types';
 
 type AuthState = {
@@ -9,6 +9,9 @@ type AuthState = {
   profile: Profile | null;
   /** True until we know whether someone is signed in (and have loaded their profile). */
   isLoading: boolean;
+  /** True after opening a password reset link, until the new password is saved or skipped. */
+  recovering: boolean;
+  endRecovery: () => void;
   refreshProfile: () => Promise<void>;
   signOut: () => Promise<void>;
 };
@@ -24,6 +27,7 @@ async function fetchProfile(userId: string) {
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [sessionLoaded, setSessionLoaded] = useState(false);
+  const [recovering, setRecovering] = useState(openedFromRecoveryLink);
   // Remembers which user the loaded profile belongs to, so a stale profile is never shown.
   const [loaded, setLoaded] = useState<{ userId: string; profile: Profile | null } | null>(null);
 
@@ -32,8 +36,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setSession(data.session);
       setSessionLoaded(true);
     });
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, nextSession) => {
+    const { data: listener } = supabase.auth.onAuthStateChange((event, nextSession) => {
       setSession(nextSession);
+      if (event === 'PASSWORD_RECOVERY') setRecovering(true);
+      if (event === 'SIGNED_OUT') setRecovering(false);
     });
     return () => listener.subscription.unsubscribe();
   }, []);
@@ -58,6 +64,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (userId) setLoaded({ userId, profile: await fetchProfile(userId) });
   }, [userId]);
 
+  const endRecovery = useCallback(() => setRecovering(false), []);
+
   const signOut = useCallback(async () => {
     await supabase.auth.signOut();
   }, []);
@@ -67,10 +75,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       session,
       profile,
       isLoading: !sessionLoaded || !profileLoaded,
+      recovering,
+      endRecovery,
       refreshProfile,
       signOut,
     }),
-    [session, profile, sessionLoaded, profileLoaded, refreshProfile, signOut]
+    [session, profile, sessionLoaded, profileLoaded, recovering, endRecovery, refreshProfile, signOut]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

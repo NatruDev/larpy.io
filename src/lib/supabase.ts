@@ -14,6 +14,17 @@ if (!supabaseUrl || !supabaseKey) {
   );
 }
 
+// Email links land with their result in the address bar (#access_token=…&type=recovery, or #error_code=…).
+// Read it once here, before Supabase signs the link in and clears it. Web only: native apps don't open these links.
+const openingHash =
+  Platform.OS === 'web' && typeof window !== 'undefined' ? new URLSearchParams(window.location.hash.slice(1)) : null;
+
+/** True when the app was opened from a password reset email. */
+export const openedFromRecoveryLink = openingHash?.get('type') === 'recovery';
+
+/** True when the app was opened from an email link that had expired or was already used. */
+export const openedFromBadLink = !!openingHash?.get('error_code');
+
 export const supabase = createClient<Database>(supabaseUrl, supabaseKey, {
   auth: {
     // AsyncStorage uses localStorage on web and on-device storage on iOS/Android.

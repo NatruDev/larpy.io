@@ -9,6 +9,7 @@ import { Celebration } from '@/components/celebrate/celebration';
 import { PhotoStrip } from '@/components/feed/photo-strip';
 import { ReminderAsk } from '@/components/reminders/reminder-ask';
 import { ShareSheet } from '@/components/share/share-sheet';
+import { SegmentedClock } from '@/components/timer/segmented-clock';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Text } from '@/components/ui/text';
@@ -23,7 +24,7 @@ import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { useDocumentTitle } from '@/hooks/use-document-title';
 import { useServerNow } from '@/hooks/use-server-now';
 import { friendlyError } from '@/lib/errors';
-import { formatClock, formatDuration, formatGoal, formatTimeOfDay } from '@/lib/format';
+import { formatDuration, formatGoal, formatTimeOfDay } from '@/lib/format';
 import { supabase } from '@/lib/supabase';
 import { useActiveSession, type SessionWithSubject } from '@/providers/active-session-provider';
 import { useAuth } from '@/providers/auth-provider';
@@ -72,7 +73,7 @@ function RunningSession({
   const startedAt = formatTimeOfDay(Date.parse(session.started_at));
   // estimatedEndMs is on the server clock; convert back to this device's clock for display.
   const endsAt = state.estimatedEndMs ? formatTimeOfDay(state.estimatedEndMs - offsetMs) : null;
-  const clockSize = breakpoint === 'phone' ? 76 : 112;
+  const clockSize = breakpoint === 'phone' ? 104 : 168;
 
   return (
     <SafeAreaView style={[styles.fill, { backgroundColor: onBreak ? colors.accentSoft : colors.background }]}>
@@ -107,11 +108,7 @@ function RunningSession({
           {onBreak ? 'Break. Stretch, drink some water.' : phaseLabel(state)}
         </Text>
 
-        <Text
-          accessibilityRole="timer"
-          style={[styles.clock, { fontSize: clockSize, lineHeight: clockSize * 1.1, color: colors.text }]}>
-          {formatClock(clockSeconds(state))}
-        </Text>
+        <SegmentedClock seconds={clockSeconds(state)} size={clockSize} />
 
         <View style={styles.progressBlock}>
           {progress !== null ? (
